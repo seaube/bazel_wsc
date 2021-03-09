@@ -1,0 +1,12 @@
+# Building on non-windows with not clang-cl is not supported at this time
+# See issue: https://github.com/zaucy/ZoneControl/issues/82
+build --compiler=clang-cl
+build --cxxopt=-fcolor-diagnostics
+build --cxxopt=-fansi-escape-codes
+build --cxxopt=/D_HAS_DEPRECATED_RESULT_OF=1
+build --cxxopt=-Xclang
+build --cxxopt=-std=c++20
+build --cxxopt=/Zc:__cplusplus
+
+# For boost, because it's really annoying.
+build --cxxopt=-Wno-macro-redefined

@@ -1,0 +1,31 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@bzlws//:index.bzl", "bzlws_copy")
+load("@com_github_zaucy_rules_7zip//:defs.bzl", "pkg_7z")
+
+cc_binary(
+    name = "workspace_status_command",
+    visibility = ["//visibility:public"],
+    srcs = ["workspace_status_command.cc"],
+    defines = ["_SILENCE_CLANG_COROUTINE_MESSAGE=1"],
+    deps = [
+        "@boost//:process",
+        "@boost//:asio",
+    ],
+)
+
+bzlws_copy(
+    name = "copy_workspace_status_command",
+    out = "{FILENAME}",
+    srcs = [":workspace_status_command"],
+)
+
+pkg_7z(
+    name = "archive",
+    extension = "zip",
+    srcs = [
+        ":workspace_status_command",
+        "workspace_status.bat",
+        "workspace_status.cmd",
+        "workspace_status.sh",
+    ],
+)
