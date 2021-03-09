@@ -6,6 +6,7 @@ cc_binary(
     name = "workspace_status_command",
     visibility = ["//visibility:public"],
     srcs = ["workspace_status_command.cc"],
+    linkstatic = True,
     defines = ["_SILENCE_CLANG_COROUTINE_MESSAGE=1"],
     deps = [
         "@boost//:process",
@@ -22,10 +23,13 @@ bzlws_copy(
 pkg_7z(
     name = "archive",
     extension = "zip",
+    strip_prefix = "package/",
     srcs = [
         ":workspace_status_command",
-        "workspace_status.bat",
-        "workspace_status.cmd",
-        "workspace_status.sh",
+        "//package:BUILD.bazel",
+        "//package:WORKSPACE",
+        "//package:workspace_status.bat",
+        "//package:workspace_status.cmd",
+        "//package:workspace_status.sh",
     ],
 )
