@@ -8,5 +8,7 @@ build --cxxopt=-Xclang
 build --cxxopt=-std=c++20
 build --cxxopt=/Zc:__cplusplus
 
+build --compilation_mode=opt
+
 # For boost, because it's really annoying.
 build --cxxopt=-Wno-macro-redefined
