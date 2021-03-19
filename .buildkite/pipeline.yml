@@ -2,15 +2,15 @@ steps:
 - label: Build workspace_status_command.exe
   agents:
     os: windows
-  command: bazel run //:copy_workspace_status_command
-  artifact_paths:
-  - workspace_status_command.exe
+  commands:
+  - bazel run //:copy_workspace_status_command
+  - buildkite-agent artifact upload workspace_status_command.exe
 - label: Build workspace_status_command
   agents:
     os: linux
-  command: bazel run //:copy_workspace_status_command
-  artifact_paths:
-  - workspace_status_command
+  commands:
+  - bazel run //:copy_workspace_status_command
+  - buildkite-agent artifact upload workspace_status_command
 - wait
 - label: Create Release Archive
   commands:
