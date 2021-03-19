@@ -39,7 +39,6 @@ pkg_7z(
 
 bzlws_copy(
     name = "copy_release_archive",
-    extension = "zip",
     tags = ["manual"],
     out = "bazel_wsc.zip",
     srcs = [":build_release_archive"],
