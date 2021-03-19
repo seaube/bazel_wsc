@@ -11,11 +11,11 @@ steps:
   command: bazel run //:copy_workspace_status_command
   artifact_paths:
   - workspace_status_command
+- wait
 - label: Create Release Archive
-  agents:
-    os: linux
   commands:
-  - bazel run //:copy_release_archive
   - buildkite-agent artifact download workspace_status_command.exe workspace_status_command.exe --step "Build workspace_status_command.exe"
+  - buildkite-agent artifact download workspace_status_command workspace_status_command --step "Build workspace_status_command"
+  - bazel run //:copy_release_archive
   artifact_paths:
   - bazel_wsc.zip
