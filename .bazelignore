@@ -1,4 +1,5 @@
 workspace_status_command.exe
 workspace_status_command
+bazel_wsc.zip
 package/WORKSPACE
 package/BUILD.bazel
