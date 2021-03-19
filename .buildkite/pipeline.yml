@@ -14,8 +14,8 @@ steps:
 - wait
 - label: Create Release Archive
   commands:
-  - buildkite-agent artifact download workspace_status_command.exe workspace_status_command.exe
-  - buildkite-agent artifact download workspace_status_command workspace_status_command
+  - buildkite-agent artifact download workspace_status_command.exe .
+  - buildkite-agent artifact download workspace_status_command .
   - bazel run //:copy_release_archive
   artifact_paths:
   - bazel_wsc.zip
