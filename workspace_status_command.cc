@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <future>
+#include <cstdlib>
 #include <boost/process.hpp>
 #include <boost/asio.hpp>
 
@@ -20,6 +21,11 @@ struct build_info {
 };
 
 static build_info get_build_info();
+static std::string get_tag();
+static std::string get_commit();
+static std::string get_version_string
+	( const build_info&
+	);
 
 int main() {
 	try {
@@ -28,7 +34,8 @@ int main() {
 		std::cout
 			<< "STABLE_GIT_COMMIT " << build_info.commit << "\n"
 			<< "STABLE_GIT_TAG " << build_info.tag << "\n"
-			<< "STABLE_GIT_DIRTY " << (build_info.dirty ? "true" : "false") << "\n";
+			<< "STABLE_GIT_DIRTY " << (build_info.dirty ? "true" : "false") << "\n"
+			<< "STABLE_VERSION" << get_version_string(build_info) << "\n";
 	} catch(const std::exception& err) {
 		std::cerr << "EXCEPTION THROWN: " << err.what() << std::endl;
 		return 2;
@@ -87,10 +94,49 @@ std::string get_system_output
 
 build_info get_build_info() {
 	return build_info{
-		.commit = get_system_output("git rev-parse HEAD"),
-		.tag = get_system_output("git tag --points-at HEAD"),
+		.commit = get_commit(),
+		.tag = get_tag(),
 		.dirty = parse_git_dity_output(
 			get_system_output("git describe --always --dirty --broken")
 		),
 	};
+}
+
+std::string get_commit() {
+	// Shortcut if we're running in buildkite
+	auto env_commit = std::getenv("BUILDKITE_COMMIT");
+	if(env_commit != nullptr) {
+		return std::string(env_commit);
+	}
+
+	return get_system_output("git rev-parse HEAD");
+}
+
+std::string get_tag() {
+	// Shortcut if we're running in buildkite
+	auto env_tag = std::getenv("BUILDKITE_TAG");
+	if(env_tag != nullptr) {
+		return std::string(env_tag);
+	}
+
+	return get_system_output("git tag --points-at HEAD");
+}
+
+std::string get_version_string
+	( const build_info& build_info
+	)
+{
+	std::string version_string;
+
+	if(build_info.tag.empty()) {
+		version_string = build_info.commit;
+	} else {
+		version_string = build_info.tag;
+	}
+
+	if(build_info.dirty) {
+		version_string += "(dirty)";
+	}
+
+	return version_string;
 }
