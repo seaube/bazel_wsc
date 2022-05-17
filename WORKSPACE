@@ -35,9 +35,9 @@ bzlws_deps()
 
 http_archive(
     name = "com_github_zaucy_rules_7zip",
-    strip_prefix = "rules_7zip-7c9fb2b1bdab4d4c3fdd49b1e12d21a5b728dc57",
-    urls = ["https://github.com/zaucy/rules_7zip/archive/7c9fb2b1bdab4d4c3fdd49b1e12d21a5b728dc57.zip"],
-    sha256 = "7adf6bcd53403ab9a44d8b42db0e8afe7fd547dbee21a5c6f5479966d96462a5",
+    strip_prefix = "rules_7zip-b064ada4b7878bc83be680fa55fcb16c893f594f",
+    urls = ["https://github.com/zaucy/rules_7zip/archive/b064ada4b7878bc83be680fa55fcb16c893f594f.zip"],
+    sha256 = "a1603959be68272506849a7ed91e7acd4c2b036a2df1b6d9112c7733a7d607db",
 )
 
 load("@com_github_zaucy_rules_7zip//:setup.bzl", "setup_7zip")
