@@ -15,9 +15,9 @@ bazel_skylib_workspace()
 
 http_archive(
     name = "boost",
-    strip_prefix = "boost-060aa1ce60c635726e6287ff0a19d39b4d61c30d",
-    urls = ["https://github.com/bazelboost/boost/archive/060aa1ce60c635726e6287ff0a19d39b4d61c30d.zip"],
-    sha256 = "908dedbd43267c34fb5f024367a5e78981219f495780955738a7b2a34bb91d5a",
+    strip_prefix = "boost-da62319c330d81ef032517cbe13b6f35d97387cb",
+    urls = ["https://github.com/bazelboost/boost/archive/da62319c330d81ef032517cbe13b6f35d97387cb.zip"],
+    sha256 = "4a79c389add7e3d54d0e12c83098d471d24536ba2d6b8593d3a95f151f25eebb",
 )
 
 load("@boost//:index.bzl", "boost_http_archives")
