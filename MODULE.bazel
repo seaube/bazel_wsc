@@ -1,0 +1,9 @@
+module(
+    name = "wsc",
+    version = "1.0.0",
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "libgit2", version = "1.4.3")
+bazel_dep(name = "rules_cc", version = "0.0.1")
+local_path_override(module_name = "libgit2", path = "/home/ezekiel/projects/libgit2")

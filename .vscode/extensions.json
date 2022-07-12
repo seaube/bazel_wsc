@@ -1,0 +1,7 @@
+{
+	"recommendations": [
+		"llvm-vs-code-extensions.vscode-clangd",
+		"vadimcn.vscode-lldb",
+		"BazelBuild.vscode-bazel"
+	]
+}

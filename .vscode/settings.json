@@ -1,0 +1,28 @@
+{
+	"editor.defaultFormatter": "xaver.clang-format",
+	"editor.formatOnSave": true,
+	"lldb.launch.sourceMap": {
+		"/proc/self/cwd": "${workspaceFolder}"
+	},
+	"files.insertFinalNewline": true,
+	"files.eol": "\n",
+	"editor.insertSpaces": false,
+	"clangd.arguments": [
+		"--header-insertion=never",
+		"--compile-commands-dir=${workspaceFolder}/",
+		"--query-driver=/**/*"
+	],
+	"clangd.onConfigChanged": "restart",
+	"clangd.checkUpdates": false,
+	"clangd.detectExtensionConflicts": true,
+	"[cpp]": {
+		"editor.formatOnSave": false,
+		"editor.detectIndentation": false
+	},
+	"[starlark]": {
+		"editor.defaultFormatter": "BazelBuild.vscode-bazel",
+		"editor.insertSpaces": true,
+		"editor.detectIndentation": false
+	},
+	"C_Cpp.autocomplete": "Disabled"
+}

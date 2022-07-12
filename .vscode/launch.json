@@ -1,0 +1,16 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "run //wsc",
+			"program": "${workspaceFolder}/bazel-bin/wsc/wsc",
+			"windows": {
+				"program": "${workspaceFolder}/bazel-bin/wsc/wsc.exe",
+			},
+			"preLaunchTask": "build //wsc"
+		}
+	],
+	"compounds": []
+}
