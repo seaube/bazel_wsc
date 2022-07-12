@@ -1,7 +1,9 @@
+build --enable_platform_specific_config # added by wsc init
+build --workspace_status_command=./.wsc/wsc.sh # added by wsc init
+build:windows --workspace_status_command=./.wsc/wsc.cmd # added by wsc init
+
 common --experimental_enable_bzlmod
-build --enable_platform_specific_config
 build --incompatible_enable_cc_toolchain_resolution
 build --incompatible_strict_action_env
 
 try-import %workspace%/user.bazelrc
-build --workspace_status_command=./wsc.bat # added by wsc init

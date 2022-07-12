@@ -4,5 +4,5 @@
 /compile_commands.json
 /.cache/
 /user.bazelrc
-/wsc
-/wsc.exe
+/.wsc/wsc
+/.wsc/wsc.exe

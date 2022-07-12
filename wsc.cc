@@ -12,27 +12,23 @@
 namespace fs = std::filesystem;
 using namespace std::string_view_literals;
 
-constexpr auto WSC_BAT = R"(:; ./wsc.sh "$@"
-:; exit
-
-@ECHO OFF
-
-@REM Workaround to have workspace status command on both UNIX based systems and
-@REM Windows: https://github.com/bazelbuild/bazel/issues/5958
-
-%~dp0\wsc.cmd %*
-)";
-
 constexpr auto WSC_CMD = R"(
 %~dp0\wsc.exe
 )";
 
-constexpr auto WSC_SH = R"(#!/usr/bin/env sh
+constexpr auto WSC_SH = R"(#!/usr/bin/env bash
 set -e
-./wsc
+WSC_EXEC="./.wsc/wsc"
+if [ -f "$WSC_EXEC" ]; then
+  $WSC_EXEC
+else 
+	>&2 echo "🔔"
+  >&2 echo "🔔 Missing wsc executable. Workspace statuses will not be reported."
+	>&2 echo "🔔 Have you done wsc init?"
+  >&2 echo "🔔 ❯ bazel run @wsc init"
+	>&2 echo "🔔"
+fi
 )";
-
-constexpr auto BAZELRC_WSC_LINE = "build --workspace_status_command=./wsc.bat";
 
 void chdir_if_bazel_run() {
 	auto workspace_dir = std::getenv("BUILD_WORKSPACE_DIRECTORY");
@@ -186,24 +182,40 @@ void ensure_gitignore_items(std::vector<std::string> items) {
 	}
 }
 
-void update_wsc_bazelrc(std::string wsc, std::string wsc_bazelrc) {
-	std::fstream bazelrc_stream(wsc_bazelrc);
+void ensure_bazelrc_lines(std::vector<std::string> lines) {
+	std::fstream bazelrc(".bazelrc");
 
-	while(bazelrc_stream.good() && !bazelrc_stream.eof()) {
+	while(bazelrc.good() && !bazelrc.eof()) {
 		std::string line;
-		std::getline(bazelrc_stream, line);
+		std::getline(bazelrc, line);
 		if(!line.empty()) {
-			if(line.starts_with(BAZELRC_WSC_LINE)) {
-				return;
+			for(auto itr = lines.begin(); itr != lines.end(); ++itr) {
+				if(line.starts_with(*itr)) {
+					lines.erase(itr);
+					break;
+				}
 			}
 		}
 	}
 
-	bazelrc_stream.clear();
-	bazelrc_stream.seekg(0, std::ios_base::end);
-	bazelrc_stream.seekg(bazelrc_stream.tellg());
+	bazelrc.clear();
+	bazelrc.seekg(0, std::ios_base::end);
+	bazelrc.seekg(bazelrc.tellg());
 
-	bazelrc_stream << BAZELRC_WSC_LINE << " # added by wsc init\n";
+	for(auto& line : lines) {
+		std::cout << "Adding " << line << " to .bazelrc ...\n";
+		bazelrc << line << " # added by wsc init\n";
+	}
+}
+
+void ensure_script(const fs::path& script_path, std::string_view script_contents) {
+	if(fs::exists(script_path)) {
+		std::cout << "Updating " << fs::relative(script_path).string() << " ...\n";
+	} else {
+		std::cout << "Creating " << fs::relative(script_path).string() << " ...\n";
+	}
+	std::ofstream(script_path) << script_contents;
+	fs::permissions(script_path, fs::perms::owner_all);
 }
 
 int init_wsc(int argc, char* argv[]) {
@@ -219,6 +231,9 @@ int init_wsc(int argc, char* argv[]) {
 		return 1;
 	}
 
+	fs::path wsc_directory = ".wsc";
+	fs::create_directories(wsc_directory);
+
 	fs::path argv0_path{argv[0]};
 	if(fs::is_symlink(argv0_path)) {
 		argv0_path = fs::read_symlink(argv0_path);
@@ -228,30 +243,37 @@ int init_wsc(int argc, char* argv[]) {
 	}
 
 	const auto argv0_filename = argv0_path.filename();
+	const auto wsc_executable = wsc_directory / argv0_filename;
 
-	if(fs::exists(argv0_filename)) {
-		std::cout << "Updating ./" << argv0_filename.string() << " ...\n";
-		fs::remove(argv0_filename);
+	if(fs::exists(wsc_executable)) {
+		std::cout << "Updating " << wsc_executable.string() << " ...\n";
+		fs::remove(wsc_executable);
 	} else {
-		std::cout << "Adding ./" << argv0_filename.string() << " ...\n";
+		std::cout << "Adding " << wsc_executable.string() << " ...\n";
 	}
-	fs::copy_file(argv0_path, argv0_filename);
-	fs::permissions(argv0_filename, fs::perms::all);
+	fs::copy_file(argv0_path, wsc_executable);
+	fs::permissions(wsc_executable, fs::perms::owner_all);
 
-	if(!fs::exists(".bazelrc")) {
-		std::cout << "Creating ./" << ".bazelrc" << " ...\n";
-		std::ofstream bazelrc_stream(".bazelrc");
-		bazelrc_stream << BAZELRC_WSC_LINE << " # added by wsc init\n";
-	} else {
-		std::cout << "Updating ./.bazelrc ...\n";
-		update_wsc_bazelrc(argv0_filename.string(), ".bazelrc");
-	}
+	const auto wsc_executable_no_extension = 
+		fs::path{wsc_executable}.replace_extension("");
 
-	auto argv0_filename_no_ext = fs::path{argv0_filename}.replace_extension("");
-	ensure_gitignore_items({"wsc", "wsc.exe"});
-	std::ofstream("wsc.bat") << WSC_BAT;
-	std::ofstream("wsc.cmd") << WSC_CMD;
-	std::ofstream("wsc.sh") << WSC_SH;
+	const auto wsc_sh_path =
+		fs::path{wsc_executable_no_extension}.replace_extension("sh");
+
+	const auto wsc_cmd_path =
+		fs::path{wsc_executable_no_extension}.replace_extension("cmd");
+
+	ensure_bazelrc_lines({
+		"build --enable_platform_specific_config",
+		"build --workspace_status_command=./" + fs::relative(wsc_sh_path).string(),
+		"build:windows --workspace_status_command=./" + fs::relative(wsc_cmd_path).string(),
+	});
+	ensure_gitignore_items({
+		wsc_executable_no_extension.string(),
+		fs::path{wsc_executable_no_extension}.replace_extension("exe").string(),
+	});
+	ensure_script(wsc_sh_path, WSC_SH);
+	ensure_script(wsc_cmd_path, WSC_CMD);
 
 	std::cout << "✨ wsc init done! ✨\n";
 
