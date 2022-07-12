@@ -12,15 +12,15 @@
 namespace fs = std::filesystem;
 using namespace std::string_view_literals;
 
-constexpr auto WSC_CMD = R"(
-if exists %~dp0\wsc.exe (
-	%~dp0\wsc.exe
+constexpr auto WSC_CMD = R"(@echo off
+if exist "%~dp0\wsc.exe" (
+	"%~dp0\wsc.exe"
 ) else (
-	>&2 echo -e "🔔"
-	>&2 echo -e "🔔 Missing wsc.exe executable. Workspace statuses will NOT be reported."
-	>&2 echo -e "🔔 Have you done wsc init?"
-	>&2 echo -e "🔔 \u276f bazel run @wsc init"
-	>&2 echo -e "🔔"
+	echo: >&2
+	echo Missing wsc.exe executable. Workspace statuses will NOT be reported. >&2 
+	echo Have you done wsc init? >&2 
+	echo  ^> bazel run @wsc init >&2 
+	echo: >&2 
 )
 )";
 
