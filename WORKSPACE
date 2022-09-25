@@ -25,9 +25,9 @@ boost_http_archives()
 
 http_archive(
     name = "bzlws",
-    strip_prefix = "bzlws-557f409ffcb2425b0fc4cb4526b2e2e9fa9601f0",
-    url = "https://github.com/zaucy/bzlws/archive/557f409ffcb2425b0fc4cb4526b2e2e9fa9601f0.zip",
-    sha256 = "887dd772883d975b766b7224b18f6d288d3723929c300474262b3ca5c8fc8e2c",
+    strip_prefix = "bzlws-b12ad162a63fc368785a217cd62c7afb0c9107f8",
+    url = "https://github.com/zaucy/bzlws/archive/b12ad162a63fc368785a217cd62c7afb0c9107f8.zip",
+    sha256 = "93e6cec29581070fe4455a2ad6c81d4b7ee8ca1b76c2c340883100ef2686c8c7",
 )
 
 load("@bzlws//:repo.bzl", "bzlws_deps")
