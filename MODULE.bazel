@@ -7,4 +7,3 @@ module(
 bazel_dep(name = "libgit2", version = "1.5.0")
 bazel_dep(name = "rules_cc", version = "0.0.2")
 bazel_dep(name = "platforms", version = "0.0.4")
-local_path_override(module_name = "libgit2", path = "C:/Users/zekew/projects/libgit2")
