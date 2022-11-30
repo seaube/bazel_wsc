@@ -1,23 +1,13 @@
+common --experimental_enable_bzlmod
 build --enable_platform_specific_config
+build --incompatible_use_platforms_repo_for_constraints
 build --incompatible_enable_cc_toolchain_resolution
+build --incompatible_strict_action_env
 
-build:windows --platforms=//:windows
-build:windows --extra_execution_platforms=//:windows
-build:windows --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows-clang-cl
-build:windows --cxxopt=/std:c++latest
-build:windows --cxxopt=-Xclang
-build:windows --cxxopt=-fcolor-diagnostics
-build:windows --cxxopt=-Xclang
-build:windows --cxxopt=-fansi-escape-codes
-build:windows --cxxopt=/D_HAS_DEPRECATED_RESULT_OF=1
-build:windows --cxxopt=/Zc:__cplusplus
-build:windows --cxxopt=/D_SILENCE_CLANG_COROUTINE_MESSAGE=1
-build:windows --cxxopt=/DBOOST_ASIO_DISABLE_STD_COROUTINE=1
+build:windows --platforms=//bazel/platforms:windows
+build:linux --platforms=//bazel/platforms:linux
 
-build:linux --platforms=//:linux
-build:linux --extra_toolchains=@llvm_toolchain//:cc-toolchain-linux
-build:linux --cxxopt=-std=c++20
-build:linux --cxxopt=-stdlib=libstdc++
-build:linux --linkopt=-lstdc++
+build --workspace_status_command=./.wsc/wsc.sh # added by wsc init
+build:windows --workspace_status_command=./.wsc/wsc.cmd # added by wsc init
 
-build --cxxopt=-Wno-macro-redefined # For boost, because it's really annoying.
+try-import %workspace%/user.bazelrc

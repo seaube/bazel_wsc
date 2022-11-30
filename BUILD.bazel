@@ -1,65 +1,10 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load("@bzlws//:index.bzl", "bzlws_copy")
-load("@com_github_zaucy_rules_7zip//:defs.bzl", "pkg_7z")
+load("//bazel:copts.bzl", "copts")
 
 cc_binary(
-    name = "workspace_status_command",
+    name = "wsc",
+    srcs = ["wsc.cc"],
+    copts = copts,
     visibility = ["//visibility:public"],
-    srcs = ["workspace_status_command.cc"],
-    linkstatic = True,
-    defines = ["_SILENCE_CLANG_COROUTINE_MESSAGE=1"],
-    deps = [
-        "@boost//process",
-        "@boost//asio",
-    ],
-)
-
-bzlws_copy(
-    name = "copy_workspace_status_command",
-    visibility = ["//visibility:public"],
-    out = "{FILENAME}",
-    srcs = [":workspace_status_command"],
-)
-
-pkg_7z(
-    name = "build_release_archive",
-    extension = "zip",
-    tags = ["manual"],
-    strip_prefix = "package/",
-    srcs = [
-        "workspace_status_command",
-        "workspace_status_command.exe",
-        "//package:BUILD.bazel",
-        "//package:WORKSPACE",
-        "//package:workspace_status.bat",
-        "//package:workspace_status.cmd",
-        "//package:workspace_status.sh",
-    ],
-)
-
-bzlws_copy(
-    name = "copy_release_archive",
-    tags = ["manual"],
-    out = "bazel_wsc.zip",
-    srcs = [":build_release_archive"],
-)
-
-platform(
-    name = "windows",
-    constraint_values = [
-        "@com_github_bazelboost_thread//:threadapi_win32",
-        "@platforms//cpu:x86_64",
-        "@platforms//os:windows",
-        "@bazel_tools//tools/cpp:clang-cl",
-    ],
-)
-
-platform(
-    name = "linux",
-    constraint_values = [
-        "@com_github_bazelboost_thread//:threadapi_pthread",
-        "@platforms//cpu:x86_64",
-        "@platforms//os:linux",
-        "@bazel_tools//tools/cpp:clang",
-    ],
+    deps = ["@libgit2"],
 )
