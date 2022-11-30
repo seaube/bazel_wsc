@@ -1,9 +1,13 @@
-build --enable_platform_specific_config # added by wsc init
-build --workspace_status_command=./.wsc/wsc.sh # added by wsc init
-build:windows --workspace_status_command=./.wsc/wsc.cmd # added by wsc init
-
 common --experimental_enable_bzlmod
+build --enable_platform_specific_config
+build --incompatible_use_platforms_repo_for_constraints
 build --incompatible_enable_cc_toolchain_resolution
 build --incompatible_strict_action_env
+
+build:windows --platforms=//bazel/platforms:windows
+build:linux --platforms=//bazel/platforms:linux
+
+build --workspace_status_command=./.wsc/wsc.sh # added by wsc init
+build:windows --workspace_status_command=./.wsc/wsc.cmd # added by wsc init
 
 try-import %workspace%/user.bazelrc

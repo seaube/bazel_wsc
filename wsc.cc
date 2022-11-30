@@ -134,7 +134,8 @@ int print_workspace_status() {
 	git_libgit2_init();
 
 	git_repository* repo = nullptr;
-	exit_if_git_error(git_repository_open(&repo, fs::current_path().c_str()));
+	auto curr_path = fs::current_path().string();
+	exit_if_git_error(git_repository_open(&repo, curr_path.c_str()));
 
 	const auto head_commit_sha = get_head_commit_sha(repo);
 	const auto tag = get_git_tag_if(repo);
