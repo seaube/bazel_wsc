@@ -274,8 +274,8 @@ int init_wsc(int argc, char* argv[]) {
 
 	ensure_bazelrc_lines({
 		"build --enable_platform_specific_config",
-		"build --workspace_status_command=./" + fs::relative(wsc_sh_path).string(),
-		"build:windows --workspace_status_command=./" + fs::relative(wsc_cmd_path).string(),
+		"build --workspace_status_command=./" + fs::relative(wsc_sh_path).generic_string(),
+		"build:windows --workspace_status_command=./" + fs::relative(wsc_cmd_path).generic_string(),
 	});
 	ensure_gitignore_items({
 		wsc_executable_no_extension.string(),

@@ -6,3 +6,5 @@
 /user.bazelrc
 /.wsc/wsc
 /.wsc/wsc.exe
+/.wsc\wsc
+/.wsc\wsc.exe
